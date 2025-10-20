@@ -13,8 +13,3 @@
 - **Live Preview** - See your image before processing
 - **Flexible Output** - Replace original or save to custom folder
 - **macOS Style** - Native-looking interface with dark theme support
-
-## Installation
-
-```bash
-pip install PyQt5 Pillow
