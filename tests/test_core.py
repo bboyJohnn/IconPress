@@ -104,16 +104,16 @@ def test_exif_orientation_is_applied(tmp_path):
         assert out.size == (20, 40)
 
 
-def test_max_side_downscales_and_keeps_aspect(tmp_path):
+def test_longest_side_downscales_and_keeps_aspect(tmp_path):
     src = save(Image.new("RGB", (400, 200)), tmp_path / "big.png")
-    dst = core.run_convert(src, core.ConvertOptions(format="PNG", max_side=100))
+    dst = core.run_convert(src, core.ConvertOptions(format="PNG", resize="longest", size=(100, 0)))
     with Image.open(dst) as out:
         assert out.size == (100, 50)
 
 
-def test_max_side_never_upscales(tmp_path):
+def test_longest_side_never_upscales_by_default(tmp_path):
     src = save(Image.new("RGB", (40, 20)), tmp_path / "small.png")
-    dst = core.run_convert(src, core.ConvertOptions(format="PNG", max_side=100))
+    dst = core.run_convert(src, core.ConvertOptions(format="PNG", resize="longest", size=(100, 0)))
     with Image.open(dst) as out:
         assert out.size == (40, 20)
 
@@ -138,7 +138,8 @@ def test_existing_files_are_not_overwritten_by_default(tmp_path):
 
 def test_overwrite_replaces_original_in_place(tmp_path):
     src = save(Image.new("RGBA", (64, 32), (0, 0, 255, 255)), tmp_path / "photo.png")
-    dst = core.run_convert(src, core.ConvertOptions(format="PNG", max_side=16), overwrite=True)
+    options = core.ConvertOptions(format="PNG", resize="longest", size=(16, 0))
+    dst = core.run_convert(src, options, overwrite=True)
     assert dst == src
     with Image.open(src) as out:
         assert out.size == (16, 8)

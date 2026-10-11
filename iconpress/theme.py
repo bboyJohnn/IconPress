@@ -85,6 +85,12 @@ QPushButton#link { background: transparent; border: none; color: $accent; paddin
 QPushButton#link:hover { color: $accent_hover; }
 QPushButton#chip { border-radius: 13px; padding: 4px 0; }
 QPushButton#chip:checked { background: $accent; border-color: $accent; color: $accent_text; }
+QPushButton#position {
+    min-width: 30px; max-width: 30px; min-height: 20px; max-height: 20px; padding: 0;
+    border-radius: 5px;
+}
+QPushButton#position:checked { background: $accent; border-color: $accent; }
+QPushButton#colorButton { text-align: left; padding: 5px 10px; }
 
 #segmented { background: $segment; border-radius: 9px; }
 #segmented QPushButton {
@@ -97,7 +103,13 @@ QComboBox, QLineEdit {
     background: $field; border: 1px solid $field_border; border-radius: 7px; padding: 5px 9px;
     selection-background-color: $accent; selection-color: $accent_text;
 }
-QComboBox:focus, QLineEdit:focus { border-color: $accent; }
+QSpinBox {
+    background: $field; border: 1px solid $field_border; border-radius: 7px; padding: 5px 9px;
+    selection-background-color: $accent; selection-color: $accent_text;
+}
+QSpinBox::up-button, QSpinBox::down-button { width: 0; border: none; }
+QComboBox:focus, QLineEdit:focus, QSpinBox:focus { border-color: $accent; }
+QLineEdit:disabled, QSpinBox:disabled, QComboBox:disabled { color: $muted; }
 QComboBox::drop-down {
     border: none; width: 26px; subcontrol-origin: padding; subcontrol-position: center right;
 }
