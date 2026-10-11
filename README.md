@@ -30,14 +30,18 @@
 
 ## Install and run
 
-Requires Python 3.10 or newer.
+Requires Python 3.10 or newer. Install the dependencies first (PySide6 and Pillow), then start
+the app:
 
 ```bash
 git clone https://github.com/bboyJohnn/IconPress.git
 cd IconPress
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 python IconPress.py
 ```
+
+`python -m pip` installs into the same Python that runs the app. On Windows a bare `pip` can
+belong to a different Python installation.
 
 Or install it as a command:
 

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import itertools
 import os
+import warnings
 from collections.abc import Collection
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -96,8 +97,14 @@ class _Source:
     icc_profile: bytes | None = None
 
 
+def _has_feature(name: str) -> bool:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")  # older Pillow warns about features it doesn't know
+        return bool(features.check(name))
+
+
 def available_formats() -> list[OutputFormat]:
-    return [f for f in CONVERT_FORMATS if f.feature is None or features.check(f.feature)]
+    return [f for f in CONVERT_FORMATS if f.feature is None or _has_feature(f.feature)]
 
 
 def readable_extensions() -> set[str]:
