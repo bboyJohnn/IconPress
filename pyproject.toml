@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iconpress"
+dynamic = ["version"]
+description = "Image converter and icon maker with a clean, modern interface"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["PySide6>=6.5", "Pillow>=10.1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.gui-scripts]
+iconpress = "iconpress.app:main"
+
+[tool.setuptools]
+packages = ["iconpress"]
+
+[tool.setuptools.dynamic]
+version = { attr = "iconpress.__version__" }
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
