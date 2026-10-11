@@ -1,0 +1,87 @@
+{
+  "Convert images and make app icons": "画像の変換とアプリアイコンの作成",
+  "Language": "言語",
+  "System language": "システムの言語",
+  "Appearance": "外観",
+  "Auto": "自動",
+  "Light": "ライト",
+  "Dark": "ダーク",
+  "Convert": "変換",
+  "Make icon": "アイコン作成",
+  "Drop images here": "ここに画像をドロップ",
+  "or click to browse — PNG, JPEG, WebP, GIF, TIFF…": "またはクリックして選択 — PNG、JPEG、WebP、GIF、TIFF…",
+  "Images · {n}": "画像 · {n}",
+  "Add…": "追加…",
+  "Clear": "クリア",
+  "Remove": "削除",
+  "Show in Folder": "フォルダで表示",
+  "Add images": "画像を追加",
+  "Images": "画像",
+  "All files": "すべてのファイル",
+  "icon preview": "アイコンのプレビュー",
+  "{n} frames": {
+    "other": "{n} フレーム"
+  },
+  "can't preview: {error}": "プレビューできません: {error}",
+  "{n} bytes": {
+    "other": "{n} バイト"
+  },
+  "{size} KB": "{size} KB",
+  "{size} MB": "{size} MB",
+  "{size} GB": "{size} GB",
+  "Format": "形式",
+  "Lossless. Keeps transparency and animation.": "劣化なし。透明部分とアニメーションを保持します。",
+  "Small photos. No transparency: transparent areas become white.": "写真を小さく保存します。透明部分は白になります。",
+  "Modern web format: small files, transparency and animation.": "最新の Web 向け形式。ファイルが小さく、透明とアニメーションに対応。",
+  "Newest web format with the best compression. Keeps transparency.": "圧縮率が最も高い新しい Web 向け形式。透明部分を保持します。",
+  "256 colours. Keeps animation; good for simple graphics.": "256 色。アニメーションを保持します。シンプルな画像向け。",
+  "Lossless, for print and archiving.": "劣化なし。印刷や保存用に。",
+  "Uncompressed bitmap.": "非圧縮のビットマップ。",
+  "Quality": "画質",
+  "Lossless": "劣化なし",
+  "Max size (longest side)": "最大サイズ（長辺）",
+  "Original size": "元のサイズ",
+  "{n} px": "{n} px",
+  "Icon": "アイコン",
+  "ICO — Windows": "ICO — Windows",
+  "ICNS — macOS": "ICNS — macOS",
+  "PNG set — web & apps": "PNG セット — Web・アプリ用",
+  "Sizes": "サイズ",
+  "macOS icons always include every size from 16 to 1024 px.": "macOS のアイコンには常に 16〜1024 px のすべてのサイズが含まれます。",
+  "Non-square images": "正方形でない画像",
+  "Fit whole image": "全体を収める",
+  "Crop to fill": "切り抜いて埋める",
+  "Rounded corners": "角の丸み",
+  "Square": "なし",
+  "{n}%": "{n}%",
+  "Save to": "保存先",
+  "Next to the original files": "元のファイルと同じ場所",
+  "Choose…": "選択…",
+  "Save next to the originals": "元のファイルと同じ場所に保存",
+  "Overwrite existing files": "既存のファイルを上書き",
+  "When off, a number is added instead: photo (1).png. When on, converting to the same format next to the original replaces it.": "オフの場合は名前に番号が付きます（例: photo (1).png）。オンの場合、元のファイルと同じ場所に同じ形式で変換すると元のファイルが置き換わります。",
+  "Add images to start": "画像を追加して開始",
+  "Convert to {fmt}": "{fmt} に変換",
+  "Convert {n} images to {fmt}": {
+    "other": "{n} 枚の画像を {fmt} に変換"
+  },
+  "Create {kind} icon": "{kind} アイコンを作成",
+  "Create {n} {kind} icons": {
+    "other": "{kind} アイコンを {n} 個作成"
+  },
+  "Create icon set": "アイコンセットを作成",
+  "Create {n} icon sets": {
+    "other": "アイコンセットを {n} 個作成"
+  },
+  "Stop": "停止",
+  "Stopping…": "停止中…",
+  "Saved {n} files.": {
+    "other": "{n} 個のファイルを保存しました。"
+  },
+  "Skipped {n} files that are not images.": {
+    "other": "画像ではないファイルを {n} 個スキップしました。"
+  },
+  "{failed} of {total} failed.": "{total} 個中 {failed} 個が失敗しました。",
+  "Stopped.": "停止しました。",
+  "Details": "詳細"
+}

@@ -1,0 +1,87 @@
+{
+  "Convert images and make app icons": "Konversi gambar dan buat ikon aplikasi",
+  "Language": "Bahasa",
+  "System language": "Bahasa sistem",
+  "Appearance": "Tampilan",
+  "Auto": "Otomatis",
+  "Light": "Terang",
+  "Dark": "Gelap",
+  "Convert": "Konversi",
+  "Make icon": "Buat ikon",
+  "Drop images here": "Letakkan gambar di sini",
+  "or click to browse — PNG, JPEG, WebP, GIF, TIFF…": "atau klik untuk memilih — PNG, JPEG, WebP, GIF, TIFF…",
+  "Images · {n}": "Gambar · {n}",
+  "Add…": "Tambah…",
+  "Clear": "Kosongkan",
+  "Remove": "Hapus",
+  "Show in Folder": "Tampilkan di Folder",
+  "Add images": "Tambah gambar",
+  "Images": "Gambar",
+  "All files": "Semua file",
+  "icon preview": "pratinjau ikon",
+  "{n} frames": {
+    "other": "{n} bingkai"
+  },
+  "can't preview: {error}": "pratinjau tidak tersedia: {error}",
+  "{n} bytes": {
+    "other": "{n} byte"
+  },
+  "{size} KB": "{size} KB",
+  "{size} MB": "{size} MB",
+  "{size} GB": "{size} GB",
+  "Format": "Format",
+  "Lossless. Keeps transparency and animation.": "Tanpa penurunan kualitas. Mempertahankan transparansi dan animasi.",
+  "Small photos. No transparency: transparent areas become white.": "Foto berukuran kecil. Tanpa transparansi: area transparan menjadi putih.",
+  "Modern web format: small files, transparency and animation.": "Format web modern: file kecil, transparansi, dan animasi.",
+  "Newest web format with the best compression. Keeps transparency.": "Format web terbaru dengan kompresi terbaik. Mempertahankan transparansi.",
+  "256 colours. Keeps animation; good for simple graphics.": "256 warna. Mempertahankan animasi; cocok untuk grafis sederhana.",
+  "Lossless, for print and archiving.": "Tanpa penurunan kualitas, untuk cetak dan arsip.",
+  "Uncompressed bitmap.": "Bitmap tanpa kompresi.",
+  "Quality": "Kualitas",
+  "Lossless": "Lossless",
+  "Max size (longest side)": "Ukuran maksimum (sisi terpanjang)",
+  "Original size": "Ukuran asli",
+  "{n} px": "{n} px",
+  "Icon": "Ikon",
+  "ICO — Windows": "ICO — Windows",
+  "ICNS — macOS": "ICNS — macOS",
+  "PNG set — web & apps": "Set PNG — web & aplikasi",
+  "Sizes": "Ukuran",
+  "macOS icons always include every size from 16 to 1024 px.": "Ikon macOS selalu mencakup semua ukuran dari 16 hingga 1024 px.",
+  "Non-square images": "Gambar yang tidak persegi",
+  "Fit whole image": "Muat seluruhnya",
+  "Crop to fill": "Potong agar penuh",
+  "Rounded corners": "Sudut membulat",
+  "Square": "Tidak ada",
+  "{n}%": "{n}%",
+  "Save to": "Simpan ke",
+  "Next to the original files": "Di samping file asli",
+  "Choose…": "Pilih…",
+  "Save next to the originals": "Simpan di samping file asli",
+  "Overwrite existing files": "Timpa file yang sudah ada",
+  "When off, a number is added instead: photo (1).png. When on, converting to the same format next to the original replaces it.": "Jika nonaktif, nomor ditambahkan ke nama: photo (1).png. Jika aktif, konversi ke format yang sama di samping file asli akan menggantikannya.",
+  "Add images to start": "Tambahkan gambar untuk memulai",
+  "Convert to {fmt}": "Konversi ke {fmt}",
+  "Convert {n} images to {fmt}": {
+    "other": "Konversi {n} gambar ke {fmt}"
+  },
+  "Create {kind} icon": "Buat ikon {kind}",
+  "Create {n} {kind} icons": {
+    "other": "Buat {n} ikon {kind}"
+  },
+  "Create icon set": "Buat set ikon",
+  "Create {n} icon sets": {
+    "other": "Buat {n} set ikon"
+  },
+  "Stop": "Hentikan",
+  "Stopping…": "Menghentikan…",
+  "Saved {n} files.": {
+    "other": "{n} file disimpan."
+  },
+  "Skipped {n} files that are not images.": {
+    "other": "{n} file dilewati karena bukan gambar."
+  },
+  "{failed} of {total} failed.": "{failed} dari {total} gagal.",
+  "Stopped.": "Dihentikan.",
+  "Details": "Detail"
+}

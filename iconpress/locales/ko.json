@@ -1,0 +1,87 @@
+{
+  "Convert images and make app icons": "이미지 변환과 앱 아이콘 만들기",
+  "Language": "언어",
+  "System language": "시스템 언어",
+  "Appearance": "모양",
+  "Auto": "자동",
+  "Light": "라이트",
+  "Dark": "다크",
+  "Convert": "변환",
+  "Make icon": "아이콘 만들기",
+  "Drop images here": "여기에 이미지를 놓으세요",
+  "or click to browse — PNG, JPEG, WebP, GIF, TIFF…": "또는 클릭하여 선택 — PNG, JPEG, WebP, GIF, TIFF…",
+  "Images · {n}": "이미지 · {n}",
+  "Add…": "추가…",
+  "Clear": "모두 지우기",
+  "Remove": "제거",
+  "Show in Folder": "폴더에서 보기",
+  "Add images": "이미지 추가",
+  "Images": "이미지",
+  "All files": "모든 파일",
+  "icon preview": "아이콘 미리보기",
+  "{n} frames": {
+    "other": "{n}프레임"
+  },
+  "can't preview: {error}": "미리 볼 수 없음: {error}",
+  "{n} bytes": {
+    "other": "{n}바이트"
+  },
+  "{size} KB": "{size}KB",
+  "{size} MB": "{size}MB",
+  "{size} GB": "{size}GB",
+  "Format": "형식",
+  "Lossless. Keeps transparency and animation.": "무손실. 투명도와 애니메이션을 유지합니다.",
+  "Small photos. No transparency: transparent areas become white.": "용량이 작은 사진. 투명도 없음: 투명한 부분은 흰색이 됩니다.",
+  "Modern web format: small files, transparency and animation.": "최신 웹 형식: 작은 파일, 투명도와 애니메이션 지원.",
+  "Newest web format with the best compression. Keeps transparency.": "압축률이 가장 좋은 최신 웹 형식. 투명도를 유지합니다.",
+  "256 colours. Keeps animation; good for simple graphics.": "256색. 애니메이션을 유지하며 단순한 그래픽에 적합합니다.",
+  "Lossless, for print and archiving.": "무손실, 인쇄 및 보관용.",
+  "Uncompressed bitmap.": "압축되지 않은 비트맵.",
+  "Quality": "품질",
+  "Lossless": "무손실",
+  "Max size (longest side)": "최대 크기 (긴 변)",
+  "Original size": "원본 크기",
+  "{n} px": "{n}px",
+  "Icon": "아이콘",
+  "ICO — Windows": "ICO — Windows",
+  "ICNS — macOS": "ICNS — macOS",
+  "PNG set — web & apps": "PNG 세트 — 웹 및 앱용",
+  "Sizes": "크기",
+  "macOS icons always include every size from 16 to 1024 px.": "macOS 아이콘에는 항상 16~1024px의 모든 크기가 포함됩니다.",
+  "Non-square images": "정사각형이 아닌 이미지",
+  "Fit whole image": "전체 맞추기",
+  "Crop to fill": "잘라서 채우기",
+  "Rounded corners": "둥근 모서리",
+  "Square": "없음",
+  "{n}%": "{n}%",
+  "Save to": "저장 위치",
+  "Next to the original files": "원본 파일과 같은 위치",
+  "Choose…": "선택…",
+  "Save next to the originals": "원본과 같은 위치에 저장",
+  "Overwrite existing files": "기존 파일 덮어쓰기",
+  "When off, a number is added instead: photo (1).png. When on, converting to the same format next to the original replaces it.": "끄면 이름에 번호가 붙습니다(예: photo (1).png). 켜면 원본과 같은 위치에 같은 형식으로 변환할 때 원본을 대체합니다.",
+  "Add images to start": "이미지를 추가하여 시작하세요",
+  "Convert to {fmt}": "{fmt}(으)로 변환",
+  "Convert {n} images to {fmt}": {
+    "other": "이미지 {n}개를 {fmt}(으)로 변환"
+  },
+  "Create {kind} icon": "{kind} 아이콘 만들기",
+  "Create {n} {kind} icons": {
+    "other": "{kind} 아이콘 {n}개 만들기"
+  },
+  "Create icon set": "아이콘 세트 만들기",
+  "Create {n} icon sets": {
+    "other": "아이콘 세트 {n}개 만들기"
+  },
+  "Stop": "중지",
+  "Stopping…": "중지하는 중…",
+  "Saved {n} files.": {
+    "other": "파일 {n}개를 저장했습니다."
+  },
+  "Skipped {n} files that are not images.": {
+    "other": "이미지가 아닌 파일 {n}개를 건너뛰었습니다."
+  },
+  "{failed} of {total} failed.": "{total}개 중 {failed}개 실패.",
+  "Stopped.": "중지됨.",
+  "Details": "자세히"
+}

@@ -1,0 +1,87 @@
+{
+  "Convert images and make app icons": "轉換圖片並製作 App 圖示",
+  "Language": "語言",
+  "System language": "跟隨系統",
+  "Appearance": "外觀",
+  "Auto": "自動",
+  "Light": "淺色",
+  "Dark": "深色",
+  "Convert": "轉換",
+  "Make icon": "製作圖示",
+  "Drop images here": "將圖片拖放到這裡",
+  "or click to browse — PNG, JPEG, WebP, GIF, TIFF…": "或按一下瀏覽 — PNG、JPEG、WebP、GIF、TIFF…",
+  "Images · {n}": "圖片 · {n}",
+  "Add…": "加入…",
+  "Clear": "清除",
+  "Remove": "移除",
+  "Show in Folder": "在資料夾中顯示",
+  "Add images": "加入圖片",
+  "Images": "圖片",
+  "All files": "所有檔案",
+  "icon preview": "圖示預覽",
+  "{n} frames": {
+    "other": "{n} 個影格"
+  },
+  "can't preview: {error}": "無法預覽：{error}",
+  "{n} bytes": {
+    "other": "{n} 位元組"
+  },
+  "{size} KB": "{size} KB",
+  "{size} MB": "{size} MB",
+  "{size} GB": "{size} GB",
+  "Format": "格式",
+  "Lossless. Keeps transparency and animation.": "無損。保留透明度和動畫。",
+  "Small photos. No transparency: transparent areas become white.": "檔案較小的照片。不支援透明：透明區域會變成白色。",
+  "Modern web format: small files, transparency and animation.": "現代網頁格式：檔案小，支援透明和動畫。",
+  "Newest web format with the best compression. Keeps transparency.": "壓縮效果最佳的新一代網頁格式。保留透明度。",
+  "256 colours. Keeps animation; good for simple graphics.": "256 色。保留動畫，適合簡單圖像。",
+  "Lossless, for print and archiving.": "無損，適用於印刷和封存。",
+  "Uncompressed bitmap.": "未壓縮的點陣圖。",
+  "Quality": "品質",
+  "Lossless": "無損",
+  "Max size (longest side)": "最大尺寸（長邊）",
+  "Original size": "原始尺寸",
+  "{n} px": "{n} px",
+  "Icon": "圖示",
+  "ICO — Windows": "ICO — Windows",
+  "ICNS — macOS": "ICNS — macOS",
+  "PNG set — web & apps": "PNG 圖示組 — 網頁和 App",
+  "Sizes": "尺寸",
+  "macOS icons always include every size from 16 to 1024 px.": "macOS 圖示一律包含 16 到 1024 px 的所有尺寸。",
+  "Non-square images": "非正方形圖片",
+  "Fit whole image": "完整顯示",
+  "Crop to fill": "裁切填滿",
+  "Rounded corners": "圓角",
+  "Square": "無",
+  "{n}%": "{n}%",
+  "Save to": "儲存至",
+  "Next to the original files": "原始檔案所在位置",
+  "Choose…": "選擇…",
+  "Save next to the originals": "儲存在原始檔案旁",
+  "Overwrite existing files": "覆寫現有檔案",
+  "When off, a number is added instead: photo (1).png. When on, converting to the same format next to the original replaces it.": "關閉時會在檔名後加上編號：photo (1).png。開啟時，在原始檔案旁轉換為相同格式會取代原始檔案。",
+  "Add images to start": "加入圖片以開始",
+  "Convert to {fmt}": "轉換為 {fmt}",
+  "Convert {n} images to {fmt}": {
+    "other": "將 {n} 張圖片轉換為 {fmt}"
+  },
+  "Create {kind} icon": "建立 {kind} 圖示",
+  "Create {n} {kind} icons": {
+    "other": "建立 {n} 個 {kind} 圖示"
+  },
+  "Create icon set": "建立圖示組",
+  "Create {n} icon sets": {
+    "other": "建立 {n} 個圖示組"
+  },
+  "Stop": "停止",
+  "Stopping…": "正在停止…",
+  "Saved {n} files.": {
+    "other": "已儲存 {n} 個檔案。"
+  },
+  "Skipped {n} files that are not images.": {
+    "other": "已略過 {n} 個非圖片檔案。"
+  },
+  "{failed} of {total} failed.": "{total} 個中有 {failed} 個失敗。",
+  "Stopped.": "已停止。",
+  "Details": "詳細資訊"
+}

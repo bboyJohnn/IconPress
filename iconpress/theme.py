@@ -10,6 +10,8 @@ from PySide6.QtCore import Qt, QTemporaryDir
 from PySide6.QtGui import QColor, QFont, QFontDatabase, QGuiApplication, QPalette
 from PySide6.QtWidgets import QApplication
 
+from . import i18n
+
 LIGHT = {
     "window": "#f5f5f7",
     "card": "#ffffff",
@@ -107,12 +109,14 @@ QComboBox QAbstractItemView {
 }
 
 QSlider::groove:horizontal { height: 4px; background: $field_border; border-radius: 2px; }
-QSlider::sub-page:horizontal { background: $accent; border-radius: 2px; }
+QSlider::sub-page:horizontal { background: $slider_left; border-radius: 2px; }
+QSlider::add-page:horizontal { background: $slider_right; border-radius: 2px; }
 QSlider::handle:horizontal {
     background: #ffffff; border: 1px solid $field_border; width: 16px; height: 16px;
     margin: -7px 0; border-radius: 9px;
 }
-QSlider::groove:horizontal:disabled, QSlider::sub-page:horizontal:disabled { background: $border; }
+QSlider::groove:horizontal:disabled, QSlider::sub-page:horizontal:disabled,
+QSlider::add-page:horizontal:disabled { background: $border; }
 
 QProgressBar { background: $segment; border: none; border-radius: 3px; max-height: 6px; }
 QProgressBar::chunk { background: $accent; border-radius: 3px; }
@@ -167,8 +171,13 @@ def apply(app: QApplication, mode: str) -> None:
     dark = mode == "dark" or (mode == "auto" and system_is_dark())
     _current = DARK if dark else LIGHT
     app.setPalette(_palette(_current))
+    # Style sheets draw sub-page left of the handle and add-page right of it whatever the
+    # text direction, so the filled part has to swap sides for right-to-left languages
+    fill, rest = _current["accent"], _current["field_border"]
+    left, right = (rest, fill) if i18n.is_rtl() else (fill, rest)
     app.setStyleSheet(_STYLE.substitute(_current, chevron=_chevron(_current["muted"]),
-                                        chevron_disabled=_chevron(_current["border"])))
+                                        chevron_disabled=_chevron(_current["border"]),
+                                        slider_left=left, slider_right=right))
 
 
 def _chevron(colour: str) -> str:

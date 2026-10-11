@@ -1,0 +1,87 @@
+{
+  "Convert images and make app icons": "Chuyển đổi ảnh và tạo biểu tượng ứng dụng",
+  "Language": "Ngôn ngữ",
+  "System language": "Ngôn ngữ hệ thống",
+  "Appearance": "Giao diện",
+  "Auto": "Tự động",
+  "Light": "Sáng",
+  "Dark": "Tối",
+  "Convert": "Chuyển đổi",
+  "Make icon": "Tạo biểu tượng",
+  "Drop images here": "Thả ảnh vào đây",
+  "or click to browse — PNG, JPEG, WebP, GIF, TIFF…": "hoặc bấm để chọn — PNG, JPEG, WebP, GIF, TIFF…",
+  "Images · {n}": "Ảnh · {n}",
+  "Add…": "Thêm…",
+  "Clear": "Xóa hết",
+  "Remove": "Gỡ bỏ",
+  "Show in Folder": "Hiện trong thư mục",
+  "Add images": "Thêm ảnh",
+  "Images": "Ảnh",
+  "All files": "Tất cả tệp",
+  "icon preview": "xem trước biểu tượng",
+  "{n} frames": {
+    "other": "{n} khung hình"
+  },
+  "can't preview: {error}": "không thể xem trước: {error}",
+  "{n} bytes": {
+    "other": "{n} byte"
+  },
+  "{size} KB": "{size} KB",
+  "{size} MB": "{size} MB",
+  "{size} GB": "{size} GB",
+  "Format": "Định dạng",
+  "Lossless. Keeps transparency and animation.": "Không mất dữ liệu. Giữ độ trong suốt và hoạt ảnh.",
+  "Small photos. No transparency: transparent areas become white.": "Ảnh dung lượng nhỏ. Không hỗ trợ trong suốt: vùng trong suốt sẽ thành màu trắng.",
+  "Modern web format: small files, transparency and animation.": "Định dạng web hiện đại: tệp nhỏ, hỗ trợ trong suốt và hoạt ảnh.",
+  "Newest web format with the best compression. Keeps transparency.": "Định dạng web mới nhất với khả năng nén tốt nhất. Giữ độ trong suốt.",
+  "256 colours. Keeps animation; good for simple graphics.": "256 màu. Giữ hoạt ảnh; phù hợp với đồ họa đơn giản.",
+  "Lossless, for print and archiving.": "Không mất dữ liệu, dùng cho in ấn và lưu trữ.",
+  "Uncompressed bitmap.": "Ảnh bitmap không nén.",
+  "Quality": "Chất lượng",
+  "Lossless": "Không mất dữ liệu",
+  "Max size (longest side)": "Kích thước tối đa (cạnh dài nhất)",
+  "Original size": "Kích thước gốc",
+  "{n} px": "{n} px",
+  "Icon": "Biểu tượng",
+  "ICO — Windows": "ICO — Windows",
+  "ICNS — macOS": "ICNS — macOS",
+  "PNG set — web & apps": "Bộ PNG — web và ứng dụng",
+  "Sizes": "Kích thước",
+  "macOS icons always include every size from 16 to 1024 px.": "Biểu tượng macOS luôn có đủ mọi kích thước từ 16 đến 1024 px.",
+  "Non-square images": "Ảnh không vuông",
+  "Fit whole image": "Vừa toàn bộ ảnh",
+  "Crop to fill": "Cắt cho vừa khung",
+  "Rounded corners": "Bo góc",
+  "Square": "Không",
+  "{n}%": "{n}%",
+  "Save to": "Lưu vào",
+  "Next to the original files": "Cạnh tệp gốc",
+  "Choose…": "Chọn…",
+  "Save next to the originals": "Lưu cạnh tệp gốc",
+  "Overwrite existing files": "Ghi đè tệp đã có",
+  "When off, a number is added instead: photo (1).png. When on, converting to the same format next to the original replaces it.": "Khi tắt, một số sẽ được thêm vào tên: photo (1).png. Khi bật, chuyển sang cùng định dạng cạnh tệp gốc sẽ thay thế tệp đó.",
+  "Add images to start": "Thêm ảnh để bắt đầu",
+  "Convert to {fmt}": "Chuyển sang {fmt}",
+  "Convert {n} images to {fmt}": {
+    "other": "Chuyển {n} ảnh sang {fmt}"
+  },
+  "Create {kind} icon": "Tạo biểu tượng {kind}",
+  "Create {n} {kind} icons": {
+    "other": "Tạo {n} biểu tượng {kind}"
+  },
+  "Create icon set": "Tạo bộ biểu tượng",
+  "Create {n} icon sets": {
+    "other": "Tạo {n} bộ biểu tượng"
+  },
+  "Stop": "Dừng",
+  "Stopping…": "Đang dừng…",
+  "Saved {n} files.": {
+    "other": "Đã lưu {n} tệp."
+  },
+  "Skipped {n} files that are not images.": {
+    "other": "Đã bỏ qua {n} tệp không phải ảnh."
+  },
+  "{failed} of {total} failed.": "{failed}/{total} tệp bị lỗi.",
+  "Stopped.": "Đã dừng.",
+  "Details": "Chi tiết"
+}

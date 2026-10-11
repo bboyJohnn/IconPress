@@ -19,6 +19,9 @@ iconpress = "iconpress.app:main"
 [tool.setuptools]
 packages = ["iconpress"]
 
+[tool.setuptools.package-data]
+iconpress = ["locales/*.json"]
+
 [tool.setuptools.dynamic]
 version = { attr = "iconpress.__version__" }
 
