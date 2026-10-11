@@ -10,12 +10,15 @@ from pathlib import Path
 import shiboken6
 from PySide6.QtCore import (
     QEvent,
+    QLibraryInfo,
+    QLocale,
     QObject,
     QSettings,
     QSize,
     Qt,
     QThread,
     QTimer,
+    QTranslator,
     QUrl,
     Signal,
     Slot,
@@ -45,7 +48,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import __version__, core, theme
+from . import __version__, core, i18n, theme
+from .i18n import N_, ntr, tr
 from .widgets import PreviewView, SegmentedControl, Switch, app_icon_pixmap, pil_to_qimage
 
 PREVIEW_SIDE = 1200
@@ -53,31 +57,31 @@ ICON_PREVIEW_SIDE = 384
 THUMB_SIDE = 112
 PREVIEW_CACHE = 6
 
-RESIZE_CHOICES = [
-    ("Original size", 0), ("3840 px", 3840), ("2560 px", 2560), ("1920 px", 1920),
-    ("1280 px", 1280), ("1024 px", 1024), ("512 px", 512),
-]
+RESIZE_CHOICES = (0, 3840, 2560, 1920, 1280, 1024, 512)  # longest side; 0 keeps the size
 ICON_KINDS = [
-    ("ICO — Windows", "ico"), ("ICNS — macOS", "icns"), ("PNG set — web & apps", "png"),
+    (N_("ICO — Windows"), "ico"), (N_("ICNS — macOS"), "icns"),
+    (N_("PNG set — web & apps"), "png"),
 ]
 DEFAULT_ICON_SIZES = {"ico": core.ICO_SIZES, "png": (16, 32, 180, 192, 512)}
 FORMAT_HINTS = {
-    "PNG": "Lossless. Keeps transparency and animation.",
-    "JPEG": "Small photos. No transparency: transparent areas become white.",
-    "WEBP": "Modern web format: small files, transparency and animation.",
-    "AVIF": "Newest web format with the best compression. Keeps transparency.",
-    "GIF": "256 colours. Keeps animation; good for simple graphics.",
-    "TIFF": "Lossless, for print and archiving.",
-    "BMP": "Uncompressed bitmap.",
+    "PNG": N_("Lossless. Keeps transparency and animation."),
+    "JPEG": N_("Small photos. No transparency: transparent areas become white."),
+    "WEBP": N_("Modern web format: small files, transparency and animation."),
+    "AVIF": N_("Newest web format with the best compression. Keeps transparency."),
+    "GIF": N_("256 colours. Keeps animation; good for simple graphics."),
+    "TIFF": N_("Lossless, for print and archiving."),
+    "BMP": N_("Uncompressed bitmap."),
 }
 
 
 def human_size(size: float) -> str:
-    for unit in ("bytes", "KB", "MB"):
-        if size < 1024:
-            return f"{size:.0f} {unit}" if unit == "bytes" else f"{size:.1f} {unit}"
+    if size < 1024:
+        return ntr("{n} bytes", int(size))
+    for unit in (N_("{size} KB"), N_("{size} MB")):
         size /= 1024
-    return f"{size:.1f} GB"
+        if size < 1024:
+            return tr(unit, size=i18n.number(size))
+    return tr("{size} GB", size=i18n.number(size / 1024))
 
 
 def to_int(value, default: int) -> int:
@@ -86,10 +90,6 @@ def to_int(value, default: int) -> int:
         return int(value)
     except (TypeError, ValueError):
         return default
-
-
-def plural(n: int, word: str) -> str:
-    return f"{n} {word}" if n == 1 else f"{n} {word}s"
 
 
 class Worker(QObject):
@@ -162,8 +162,11 @@ class MainWindow(QMainWindow):
         self._thread: QThread | None = None
         self._worker: Worker | None = None
         self._results: list = []
+        self._thumbs: dict[Path, QIcon] = {}
         self._icon_sizes = {kind: set(sizes) for kind, sizes in DEFAULT_ICON_SIZES.items()}
         self._theme_mode = "auto"
+        self._stopping = False
+        self._qt_translator = QTranslator(self)
 
         self.setWindowTitle("IconPress")
         self.setWindowIcon(QIcon(app_icon_pixmap()))
@@ -177,8 +180,15 @@ class MainWindow(QMainWindow):
         self._preview_timer = QTimer(self, singleShot=True, interval=30)
         self._preview_timer.timeout.connect(self._update_preview)
 
+        QShortcut(QKeySequence.StandardKey.Open, self, self.add_files_dialog)
+        for keys in ("Ctrl+Return", "Ctrl+Enter"):
+            QShortcut(QKeySequence(keys), self, self._on_run)
+
+        self._apply_language(self.settings.value("language", "auto"))
         self._build()
         self._load_settings()
+        if geometry := self.settings.value("geometry"):
+            self.restoreGeometry(geometry)
         hints = QApplication.styleHints()
         if hasattr(hints, "colorSchemeChanged"):
             hints.colorSchemeChanged.connect(self._on_system_theme)
@@ -200,10 +210,6 @@ class MainWindow(QMainWindow):
         body.addWidget(self._build_settings_panel())
         outer.addLayout(body, 1)
 
-        QShortcut(QKeySequence.StandardKey.Open, self, self.add_files_dialog)
-        for keys in ("Ctrl+Return", "Ctrl+Enter"):
-            QShortcut(QKeySequence(keys), self, self._on_run)
-
     def _build_header(self) -> QHBoxLayout:
         logo = QLabel()
         pixmap = app_icon_pixmap(88)
@@ -213,11 +219,20 @@ class MainWindow(QMainWindow):
         titles = QVBoxLayout()
         titles.setSpacing(0)
         titles.addWidget(label("IconPress", "title"))
-        titles.addWidget(label("Convert images and make app icons", "subtitle"))
+        titles.addWidget(label(tr("Convert images and make app icons"), "subtitle"))
 
-        self.theme_control = SegmentedControl([("Auto", "auto"), ("Light", "light"),
-                                               ("Dark", "dark")])
-        self.theme_control.setToolTip("Appearance")
+        self.language_box = QComboBox()
+        self.language_box.setToolTip(tr("Language"))
+        self.language_box.addItem(tr("System language"), "auto")
+        for code, name in i18n.LANGUAGES.items():
+            self.language_box.addItem(name, code)
+        self._select(self.language_box, self._language_choice)
+        self.language_box.currentIndexChanged.connect(
+            lambda _: self._set_language(self.language_box.currentData()))
+
+        self.theme_control = SegmentedControl([(tr("Auto"), "auto"), (tr("Light"), "light"),
+                                               (tr("Dark"), "dark")])
+        self.theme_control.setToolTip(tr("Appearance"))
         self.theme_control.changed.connect(self._set_theme)
 
         header = QHBoxLayout()
@@ -225,6 +240,7 @@ class MainWindow(QMainWindow):
         header.addWidget(logo)
         header.addLayout(titles)
         header.addStretch()
+        header.addWidget(self.language_box, 0, Qt.AlignmentFlag.AlignVCenter)
         header.addWidget(self.theme_control, 0, Qt.AlignmentFlag.AlignVCenter)
         return header
 
@@ -245,10 +261,10 @@ class MainWindow(QMainWindow):
         strip.setContentsMargins(0, 0, 0, 0)
         strip.setSpacing(4)
         header = QHBoxLayout()
-        self.files_title = label("Images", "sectionTitle")
-        self.add_button = QPushButton("Add…", objectName="link")
+        self.files_title = label("", "sectionTitle")
+        self.add_button = QPushButton(tr("Add…"), objectName="link")
         self.add_button.clicked.connect(self.add_files_dialog)
-        self.clear_button = QPushButton("Clear", objectName="link")
+        self.clear_button = QPushButton(tr("Clear"), objectName="link")
         self.clear_button.clicked.connect(self.clear_files)
         header.addWidget(self.files_title)
         header.addStretch()
@@ -271,11 +287,11 @@ class MainWindow(QMainWindow):
         self.file_list.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.file_list.currentRowChanged.connect(lambda _: self._update_preview())
         self.file_list.setContextMenuPolicy(Qt.ContextMenuPolicy.ActionsContextMenu)
-        remove = QAction("Remove", self.file_list)
+        remove = QAction(tr("Remove"), self.file_list)
         remove.setShortcuts([QKeySequence.StandardKey.Delete, QKeySequence("Backspace")])
         remove.setShortcutContext(Qt.ShortcutContext.WidgetShortcut)
         remove.triggered.connect(self.remove_selected)
-        reveal = QAction("Show in Folder", self.file_list)
+        reveal = QAction(tr("Show in Folder"), self.file_list)
         reveal.triggered.connect(self._reveal_selected)
         self.file_list.addActions([remove, reveal])
         strip.addWidget(self.file_list)
@@ -289,7 +305,7 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(12)
 
-        self.mode = SegmentedControl([("Convert", "convert"), ("Make icon", "icon")])
+        self.mode = SegmentedControl([(tr("Convert"), "convert"), (tr("Make icon"), "icon")])
         self.mode.changed.connect(self._on_mode)
         layout.addWidget(self.mode)
 
@@ -334,7 +350,7 @@ class MainWindow(QMainWindow):
         return panel
 
     def _build_convert_card(self) -> QFrame:
-        frame, layout = card("Format")
+        frame, layout = card(tr("Format"))
         self.format_box = QComboBox()
         for fmt in core.available_formats():
             self.format_box.addItem(fmt.label, fmt.name)
@@ -346,49 +362,51 @@ class MainWindow(QMainWindow):
 
         layout.addSpacing(4)
         self.quality_value = label("", "value")
-        layout.addLayout(value_row("Quality", self.quality_value))
+        layout.addLayout(value_row(tr("Quality"), self.quality_value))
         self.quality = QSlider(Qt.Orientation.Horizontal)
         self.quality.setRange(10, 100)
         self.quality.valueChanged.connect(lambda v: self.quality_value.setText(str(v)))
         layout.addWidget(self.quality)
 
         layout.addSpacing(4)
-        layout.addWidget(label("Max size (longest side)"))
+        layout.addWidget(label(tr("Max size (longest side)")))
         self.resize_box = QComboBox()
-        for text, value in RESIZE_CHOICES:
-            self.resize_box.addItem(text, value)
+        for value in RESIZE_CHOICES:
+            self.resize_box.addItem(tr("{n} px", n=value) if value else tr("Original size"),
+                                    value)
         layout.addWidget(self.resize_box)
         return frame
 
     def _build_icon_card(self) -> QFrame:
-        frame, layout = card("Icon")
+        frame, layout = card(tr("Icon"))
         self.icon_kind = QComboBox()
         for text, value in ICON_KINDS:
-            self.icon_kind.addItem(text, value)
+            self.icon_kind.addItem(tr(text), value)
         self.icon_kind.currentIndexChanged.connect(self._on_icon_kind)
         layout.addWidget(self.icon_kind)
 
         layout.addSpacing(4)
-        layout.addWidget(label("Sizes"))
+        layout.addWidget(label(tr("Sizes")))
         self.chips_box = QWidget()
         self.chips = QGridLayout(self.chips_box)
         self.chips.setContentsMargins(0, 0, 0, 0)
         self.chips.setSpacing(6)
         layout.addWidget(self.chips_box)
-        self.icns_note = label("macOS icons always include every size from 16 to 1024 px.",
+        self.icns_note = label(tr("macOS icons always include every size from 16 to 1024 px."),
                                "hint")
         self.icns_note.setWordWrap(True)
         layout.addWidget(self.icns_note)
 
         layout.addSpacing(4)
-        layout.addWidget(label("Non-square images"))
-        self.fit = SegmentedControl([("Fit whole image", "pad"), ("Crop to fill", "crop")])
+        layout.addWidget(label(tr("Non-square images")))
+        self.fit = SegmentedControl([(tr("Fit whole image"), "pad"),
+                                     (tr("Crop to fill"), "crop")])
         self.fit.changed.connect(lambda _: self._schedule_preview())
         layout.addWidget(self.fit)
 
         layout.addSpacing(4)
         self.radius_value = label("", "value")
-        layout.addLayout(value_row("Rounded corners", self.radius_value))
+        layout.addLayout(value_row(tr("Rounded corners"), self.radius_value))
         self.radius = QSlider(Qt.Orientation.Horizontal)
         self.radius.setRange(0, 50)
         self.radius.valueChanged.connect(self._on_radius)
@@ -396,28 +414,29 @@ class MainWindow(QMainWindow):
         return frame
 
     def _build_output_card(self) -> QFrame:
-        frame, layout = card("Save to")
+        frame, layout = card(tr("Save to"))
         row = QHBoxLayout()
         row.setSpacing(6)
-        self.out_field = QLineEdit(readOnly=True, placeholderText="Next to the original files")
-        choose = QPushButton("Choose…")
+        self.out_field = QLineEdit(readOnly=True,
+                                   placeholderText=tr("Next to the original files"))
+        choose = QPushButton(tr("Choose…"))
         choose.clicked.connect(self.choose_output_folder)
         row.addWidget(self.out_field, 1)
         row.addWidget(choose)
         layout.addLayout(row)
-        self.reset_out = QPushButton("Save next to the originals", objectName="link")
+        self.reset_out = QPushButton(tr("Save next to the originals"), objectName="link")
         self.reset_out.clicked.connect(lambda: self._set_output_dir(""))
         layout.addWidget(self.reset_out, 0, Qt.AlignmentFlag.AlignLeft)
 
         layout.addSpacing(4)
         overwrite = QHBoxLayout()
-        overwrite.addWidget(label("Overwrite existing files"))
+        overwrite.addWidget(label(tr("Overwrite existing files")))
         overwrite.addStretch()
         self.overwrite = Switch()
         overwrite.addWidget(self.overwrite)
         layout.addLayout(overwrite)
-        hint = label("When off, a number is added instead: photo (1).png. When on, converting "
-                     "to the same format next to the original replaces it.", "hint")
+        hint = label(tr("When off, a number is added instead: photo (1).png. When on, "
+                        "converting to the same format next to the original replaces it."), "hint")
         hint.setWordWrap(True)
         layout.addWidget(hint)
         return frame
@@ -445,13 +464,12 @@ class MainWindow(QMainWindow):
         self._set_output_dir(out_dir if out_dir and Path(out_dir).is_dir() else "")
         self.overwrite.setChecked(s.value("overwrite", False, type=bool))
         self._last_dir = s.value("last_dir", str(Path.home()))
-        if geometry := s.value("geometry"):
-            self.restoreGeometry(geometry)
         self._on_mode(self.mode.value())
         self._on_icon_kind()
 
     def _save_settings(self) -> None:
         s = self.settings
+        s.setValue("language", self._language_choice)
         s.setValue("theme", self._theme_mode)
         s.setValue("mode", self.mode.value())
         s.setValue("format", self.format_box.currentData())
@@ -483,6 +501,38 @@ class MainWindow(QMainWindow):
     def _on_system_theme(self, *_args) -> None:
         if self._theme_mode == "auto":
             theme.apply(QApplication.instance(), "auto")
+
+    def _apply_language(self, choice) -> None:
+        """Switch translations, number formats and text direction; ``"auto"`` follows the OS."""
+        self._language_choice = choice if choice in i18n.LANGUAGES else "auto"
+        code = i18n.set_language(i18n.match(QLocale.system().uiLanguages())
+                                 if self._language_choice == "auto" else self._language_choice)
+        locale = QLocale(code)
+        QLocale.setDefault(locale)
+        app = QApplication.instance()
+        app.setLayoutDirection(Qt.LayoutDirection.RightToLeft if i18n.is_rtl()
+                               else Qt.LayoutDirection.LeftToRight)
+        # Qt's own texts: standard dialog buttons, text field context menus
+        app.removeTranslator(self._qt_translator)
+        path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+        if self._qt_translator.load(locale, "qtbase", "_", path):
+            app.installTranslator(self._qt_translator)
+
+    def _set_language(self, choice) -> None:
+        if choice == self._language_choice or self._busy():
+            return
+        self._save_settings()
+        self._apply_language(choice)
+        self.settings.setValue("language", self._language_choice)
+        # Rebuild the interface in the new language, keeping the files and options
+        current = self._current_path()
+        self._build()
+        self._load_settings()
+        for path in self.files:
+            self.file_list.addItem(self._file_item(path))
+        if current in self.files:
+            self.file_list.setCurrentRow(self.files.index(current))
+        self._refresh()
 
     # ----- options ------------------------------------------------------------------------
 
@@ -538,7 +588,7 @@ class MainWindow(QMainWindow):
             chip.setChecked(True)  # an icon needs at least one size
 
     def _on_radius(self, value: int) -> None:
-        self.radius_value.setText("Square" if value == 0 else f"{value}%")
+        self.radius_value.setText(tr("{n}%", n=value) if value else tr("Square"))
         self._schedule_preview()
 
     # ----- files --------------------------------------------------------------------------
@@ -548,7 +598,8 @@ class MainWindow(QMainWindow):
             return
         patterns = " ".join(f"*{ext}" for ext in core.input_extensions())
         paths, _ = QFileDialog.getOpenFileNames(
-            self, "Add Images", self._last_dir, f"Images ({patterns});;All files (*)")
+            self, tr("Add images"), self._last_dir,
+            f"{tr('Images')} ({patterns});;{tr('All files')} (*)")
         if paths:
             self.add_paths(paths)
 
@@ -575,9 +626,7 @@ class MainWindow(QMainWindow):
             except Exception:
                 skipped.append(path.name)
                 continue
-            item = QListWidgetItem(self._placeholder_icon(), path.name)
-            item.setToolTip(str(path))
-            self.file_list.addItem(item)
+            self.file_list.addItem(self._file_item(path))
             self.files.append(path)
             self._thumb_queue.append(path)
             added.append(path)
@@ -587,9 +636,9 @@ class MainWindow(QMainWindow):
             self.file_list.setCurrentRow(self.files.index(added[0]))
             QTimer.singleShot(0, self._load_next_thumb)
         if skipped:
-            self._show_banner("error", f"Skipped {plural(len(skipped), 'file')} that "
-                              f"{'is' if len(skipped) == 1 else 'are'} not an image.",
-                              "Details", details="\n".join(skipped))
+            self._show_banner("error", ntr("Skipped {n} files that are not images.",
+                                           len(skipped)),
+                              tr("Details"), details="\n".join(skipped))
         elif added:
             self.banner.hide()
         self._refresh()
@@ -619,11 +668,17 @@ class MainWindow(QMainWindow):
     def _forget(self, path: Path) -> None:
         self._infos.pop(path, None)
         self._previews.pop(path, None)
+        self._thumbs.pop(path, None)
 
-    def _placeholder_icon(self) -> QIcon:
-        pixmap = QPixmap(THUMB_SIDE, THUMB_SIDE)
-        pixmap.fill(Qt.GlobalColor.transparent)
-        return QIcon(pixmap)
+    def _file_item(self, path: Path) -> QListWidgetItem:
+        icon = self._thumbs.get(path)
+        if icon is None:
+            pixmap = QPixmap(THUMB_SIDE, THUMB_SIDE)
+            pixmap.fill(Qt.GlobalColor.transparent)
+            icon = QIcon(pixmap)
+        item = QListWidgetItem(icon, path.name)
+        item.setToolTip(str(path))
+        return item
 
     def _load_next_thumb(self) -> None:
         # One thumbnail per event-loop turn keeps the window responsive for big batches
@@ -637,6 +692,7 @@ class MainWindow(QMainWindow):
                 pixmap = QPixmap.fromImage(image)
                 icon = QIcon(pixmap)
                 icon.addPixmap(pixmap, QIcon.Mode.Selected)  # no tint on the selected one
+                self._thumbs[path] = icon
                 self.file_list.item(self.files.index(path)).setIcon(icon)
             except Exception:
                 pass  # the file stays in the list; converting it will report the error
@@ -657,7 +713,7 @@ class MainWindow(QMainWindow):
 
     def choose_output_folder(self) -> None:
         folder = QFileDialog.getExistingDirectory(
-            self, "Save To", self.out_field.text() or self._last_dir)
+            self, tr("Save to"), self.out_field.text() or self._last_dir)
         if folder:
             self._set_output_dir(folder)
 
@@ -689,7 +745,7 @@ class MainWindow(QMainWindow):
         details = [path.name, f"{info.width} × {info.height}", info.format,
                    human_size(info.file_size)]
         if info.frames > 1:
-            details.append(f"{info.frames} frames")
+            details.append(ntr("{n} frames", info.frames))
         try:
             image = self._preview_image(path)
             ratio = 1.0
@@ -697,14 +753,17 @@ class MainWindow(QMainWindow):
                 options = self.icon_options()
                 ratio = max(1.0, self.devicePixelRatioF())  # sharp on Retina / HiDPI screens
                 image = core.render_icon(image, options, round(ICON_PREVIEW_SIDE * ratio))
-                details = [path.name, "icon preview", options.kind.upper()]
+                details = [path.name, tr("icon preview"), options.kind.upper()]
             qimage = pil_to_qimage(image)
             qimage.setDevicePixelRatio(ratio)
             self.preview.set_image(qimage)
         except Exception as exc:
             self.preview.set_image(None)
-            details.append(f"can't preview: {exc}")
-        self.caption.setText("   ·   ".join(details))
+            details.append(tr("can't preview: {error}", error=exc))
+        # Isolate each part so numbers and names keep their order in right-to-left languages
+        direction = "\u200f" if i18n.is_rtl() else "\u200e"
+        self.caption.setText(direction + "   ·   ".join(f"\u2068{part}\u2069"
+                                                       for part in details))
         self.caption.show()
 
     # ----- running ------------------------------------------------------------------------
@@ -715,8 +774,8 @@ class MainWindow(QMainWindow):
     def _on_run(self) -> None:
         if self._worker is not None:
             self._worker.cancel()
-            self.run_button.setEnabled(False)
-            self.run_button.setText("Stopping…")
+            self._stopping = True
+            self._refresh()
             return
         if not self.files:
             return
@@ -753,6 +812,7 @@ class MainWindow(QMainWindow):
         self._thread.wait()
         self._thread.deleteLater()
         self._thread = self._worker = None
+        self._stopping = False
         self._set_busy(False)
         self.progress.hide()
         self._results = results
@@ -761,24 +821,27 @@ class MainWindow(QMainWindow):
             if out in self._infos:  # an original was replaced: refresh what we show for it
                 self._infos[out] = core.describe(out)
                 self._previews.pop(out, None)
+                self._thumbs.pop(out, None)
                 self._thumb_queue.append(out)
         QTimer.singleShot(0, self._load_next_thumb)
         self._update_preview()
 
         saved = sum(1 for r in results if r[1])
         failed = [r for r in results if r[2]]
-        stopped = "Stopped. " if len(results) < total else ""
+        stopped = tr("Stopped.") + " " if len(results) < total else ""
         if failed:
-            self._show_banner("error", f"{stopped}{len(failed)} of {len(results)} failed.",
-                              "Details", details="\n".join(f"{src.name}: {error}"
-                                                            for src, _, error in failed))
+            self._show_banner("error", stopped + tr("{failed} of {total} failed.",
+                                                    failed=len(failed), total=len(results)),
+                              tr("Details"), details="\n".join(f"{src.name}: {error}"
+                                                                for src, _, error in failed))
         elif saved:
-            self._show_banner("ok", f"{stopped}Saved {plural(saved, 'file')}.",
-                              "Show in Folder")
+            self._show_banner("ok", stopped + ntr("Saved {n} files.", saved),
+                              tr("Show in Folder"))
         self._refresh()
 
     def _set_busy(self, busy: bool) -> None:
-        for widget in (self.settings_area, self.mode, self.add_button, self.clear_button):
+        for widget in (self.settings_area, self.mode, self.add_button, self.clear_button,
+                       self.language_box):
             widget.setEnabled(not busy)
         self._refresh()
 
@@ -804,29 +867,31 @@ class MainWindow(QMainWindow):
     def _refresh(self, *_args) -> None:
         count = len(self.files)
         self.strip.setVisible(count > 0)
-        self.files_title.setText(f"Images · {count}")
+        self.files_title.setText(tr("Images · {n}", n=count))
 
         fmt = core.FORMATS[self.format_box.currentData()]
-        self.format_hint.setText(FORMAT_HINTS.get(fmt.name, ""))
+        self.format_hint.setText(tr(FORMAT_HINTS[fmt.name]))
         self.quality.setEnabled(fmt.lossy)
-        self.quality_value.setText(str(self.quality.value()) if fmt.lossy else "Lossless")
+        self.quality_value.setText(str(self.quality.value()) if fmt.lossy else tr("Lossless"))
 
         button = self.run_button
         if self._worker is not None:
-            if button.text() != "Stopping…":
-                button.setText("Stop")
-                button.setEnabled(True)
+            button.setText(tr("Stopping…") if self._stopping else tr("Stop"))
+            button.setEnabled(not self._stopping)
             return
         button.setEnabled(count > 0)
+        kind = self.icon_kind.currentData()
         if not count:
-            button.setText("Add images to start")
+            button.setText(tr("Add images to start"))
         elif self.mode.value() == "convert":
-            button.setText(f"Convert {plural(count, 'image')} to {fmt.label}" if count > 1
-                           else f"Convert to {fmt.label}")
+            button.setText(ntr("Convert {n} images to {fmt}", count, fmt=fmt.label) if count > 1
+                           else tr("Convert to {fmt}", fmt=fmt.label))
+        elif kind == "png":
+            button.setText(ntr("Create {n} icon sets", count) if count > 1
+                           else tr("Create icon set"))
         else:
-            kind = self.icon_kind.currentData()
-            noun = "icon set" if kind == "png" else f"{kind.upper()} icon"
-            button.setText(f"Create {count} {noun}s" if count > 1 else f"Create {noun}")
+            button.setText(ntr("Create {n} {kind} icons", count, kind=kind.upper()) if count > 1
+                           else tr("Create {kind} icon", kind=kind.upper()))
 
     # ----- events -------------------------------------------------------------------------
 

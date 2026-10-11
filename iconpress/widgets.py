@@ -14,6 +14,8 @@ from PySide6.QtCore import (
 from PySide6.QtGui import (
     QBrush,
     QColor,
+    QFont,
+    QFontMetrics,
     QImage,
     QLinearGradient,
     QPainter,
@@ -32,6 +34,7 @@ from PySide6.QtWidgets import (
 )
 
 from . import theme
+from .i18n import tr
 
 
 class Switch(QAbstractButton):
@@ -79,7 +82,8 @@ class Switch(QAbstractButton):
         p.setBrush(mix)
         p.drawRoundedRect(track, track.height() / 2, track.height() / 2)
         knob = track.height() - 4
-        x = track.left() + 2 + (track.width() - knob - 4) * self._pos
+        pos = 1 - self._pos if self.isRightToLeft() else self._pos  # "on" is at the start in RTL
+        x = track.left() + 2 + (track.width() - knob - 4) * pos
         p.setBrush(QColor(0, 0, 0, 40))
         p.drawEllipse(QRectF(x, track.top() + 2.6, knob, knob))
         p.setBrush(QColor("#ffffff"))
@@ -102,6 +106,10 @@ class SegmentedControl(QFrame):
         for index, (text, value) in enumerate(options):
             button = QPushButton(text)
             button.setCheckable(True)
+            # The checked segment is bold; reserve room so its text is never clipped
+            bold = QFont(button.font())
+            bold.setWeight(QFont.Weight.DemiBold)
+            button.setMinimumWidth(QFontMetrics(bold).horizontalAdvance(text) + 28)
             button.setCursor(Qt.CursorShape.PointingHandCursor)
             layout.addWidget(button)
             self._group.addButton(button, index)
@@ -208,13 +216,14 @@ class PreviewView(QWidget):
         p.setFont(font)
         p.setPen(theme.color("text"))
         p.drawText(QRectF(area.left(), c.y() - 4, area.width(), 22),
-                   Qt.AlignmentFlag.AlignCenter, "Drop images here")
+                   Qt.AlignmentFlag.AlignCenter, tr("Drop images here"))
         font.setPixelSize(13)
         font.setBold(False)
         p.setFont(font)
         p.setPen(theme.color("muted"))
         p.drawText(QRectF(area.left(), c.y() + 20, area.width(), 20),
-                   Qt.AlignmentFlag.AlignCenter, "or click to browse — PNG, JPEG, WebP, GIF, TIFF…")
+                   Qt.AlignmentFlag.AlignCenter,
+                   tr("or click to browse — PNG, JPEG, WebP, GIF, TIFF…"))
 
     def _paint_image(self, p: QPainter, area: QRectF) -> None:
         image = self._image

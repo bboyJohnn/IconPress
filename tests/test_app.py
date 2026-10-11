@@ -5,10 +5,10 @@ from PIL import Image
 
 pytest.importorskip("PySide6.QtWidgets")
 
-from PySide6.QtCore import QEvent, QSettings  # noqa: E402
+from PySide6.QtCore import QEvent, QSettings, Qt  # noqa: E402
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
-from iconpress import core, theme  # noqa: E402
+from iconpress import core, i18n, theme  # noqa: E402
 from iconpress.app import MainWindow  # noqa: E402
 
 
@@ -21,7 +21,17 @@ def app():
 
 @pytest.fixture
 def settings(tmp_path):
-    return QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
+    settings = QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
+    settings.setValue("language", "en")  # the tests check English texts, whatever the OS uses
+    return settings
+
+
+@pytest.fixture(autouse=True)
+def english_afterwards():
+    yield
+    i18n.set_language("en")
+    if QApplication.instance():
+        QApplication.instance().setLayoutDirection(Qt.LayoutDirection.LeftToRight)
 
 
 def close(win):
@@ -155,5 +165,37 @@ def test_damaged_settings_fall_back_to_defaults(app, settings):
         assert win.quality.value() == 90
         assert win.icon_options().sizes == core.ICO_SIZES
         assert win._theme_mode == "auto"
+    finally:
+        close(win)
+
+
+def test_switch_language_keeps_files_and_options(app, window, images, settings):
+    window.add_paths([images / "logo.png", images / "palette.gif"])
+    window._select(window.format_box, "WEBP")
+    window._select(window.language_box, "de")
+    assert window.run_button.text() == "2 Bilder in WebP konvertieren"
+    assert window.file_list.count() == 2 and window.format_box.currentData() == "WEBP"
+    assert settings.value("language") == "de"
+
+    window._select(window.language_box, "ar")
+    assert app.layoutDirection() == Qt.LayoutDirection.RightToLeft
+    assert window.run_button.text() == "تحويل صورتين إلى WebP"
+
+    window._select(window.language_box, "ru")
+    assert app.layoutDirection() == Qt.LayoutDirection.LeftToRight
+    window.add_paths([images / "print.jpg"])
+    assert window.run_button.text() == "Конвертировать 3 изображения в WebP"
+
+
+def test_language_follows_system_when_auto(app, settings, monkeypatch):
+    from PySide6.QtCore import QLocale
+
+    settings.setValue("language", "auto")
+    monkeypatch.setattr(QLocale, "system", staticmethod(lambda: QLocale("pl_PL")))
+    win = MainWindow(settings)
+    try:
+        assert i18n.language() == "pl"
+        assert win.run_button.text() == "Dodaj obrazy, aby zacząć"
+        assert win.language_box.currentData() == "auto"
     finally:
         close(win)

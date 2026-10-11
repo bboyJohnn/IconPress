@@ -1,0 +1,87 @@
+{
+  "Convert images and make app icons": "转换图片并制作应用图标",
+  "Language": "语言",
+  "System language": "跟随系统",
+  "Appearance": "外观",
+  "Auto": "自动",
+  "Light": "浅色",
+  "Dark": "深色",
+  "Convert": "转换",
+  "Make icon": "制作图标",
+  "Drop images here": "将图片拖放到此处",
+  "or click to browse — PNG, JPEG, WebP, GIF, TIFF…": "或点击浏览 — PNG、JPEG、WebP、GIF、TIFF…",
+  "Images · {n}": "图片 · {n}",
+  "Add…": "添加…",
+  "Clear": "清空",
+  "Remove": "移除",
+  "Show in Folder": "在文件夹中显示",
+  "Add images": "添加图片",
+  "Images": "图片",
+  "All files": "所有文件",
+  "icon preview": "图标预览",
+  "{n} frames": {
+    "other": "{n} 帧"
+  },
+  "can't preview: {error}": "无法预览：{error}",
+  "{n} bytes": {
+    "other": "{n} 字节"
+  },
+  "{size} KB": "{size} KB",
+  "{size} MB": "{size} MB",
+  "{size} GB": "{size} GB",
+  "Format": "格式",
+  "Lossless. Keeps transparency and animation.": "无损。保留透明度和动画。",
+  "Small photos. No transparency: transparent areas become white.": "体积小的照片。不支持透明：透明区域会变成白色。",
+  "Modern web format: small files, transparency and animation.": "现代网页格式：文件小，支持透明和动画。",
+  "Newest web format with the best compression. Keeps transparency.": "压缩效果最好的新一代网页格式。保留透明度。",
+  "256 colours. Keeps animation; good for simple graphics.": "256 色。保留动画，适合简单图形。",
+  "Lossless, for print and archiving.": "无损，适用于印刷和存档。",
+  "Uncompressed bitmap.": "未压缩的位图。",
+  "Quality": "质量",
+  "Lossless": "无损",
+  "Max size (longest side)": "最大尺寸（长边）",
+  "Original size": "原始尺寸",
+  "{n} px": "{n} px",
+  "Icon": "图标",
+  "ICO — Windows": "ICO — Windows",
+  "ICNS — macOS": "ICNS — macOS",
+  "PNG set — web & apps": "PNG 图标集 — 网页和应用",
+  "Sizes": "尺寸",
+  "macOS icons always include every size from 16 to 1024 px.": "macOS 图标始终包含 16 到 1024 px 的所有尺寸。",
+  "Non-square images": "非正方形图片",
+  "Fit whole image": "完整显示",
+  "Crop to fill": "裁剪填充",
+  "Rounded corners": "圆角",
+  "Square": "无",
+  "{n}%": "{n}%",
+  "Save to": "保存到",
+  "Next to the original files": "原文件所在位置",
+  "Choose…": "选择…",
+  "Save next to the originals": "保存到原文件旁边",
+  "Overwrite existing files": "覆盖已有文件",
+  "When off, a number is added instead: photo (1).png. When on, converting to the same format next to the original replaces it.": "关闭时会在文件名后加编号：photo (1).png。开启时，在原文件旁转换为相同格式会替换原文件。",
+  "Add images to start": "添加图片以开始",
+  "Convert to {fmt}": "转换为 {fmt}",
+  "Convert {n} images to {fmt}": {
+    "other": "将 {n} 张图片转换为 {fmt}"
+  },
+  "Create {kind} icon": "创建 {kind} 图标",
+  "Create {n} {kind} icons": {
+    "other": "创建 {n} 个 {kind} 图标"
+  },
+  "Create icon set": "创建图标集",
+  "Create {n} icon sets": {
+    "other": "创建 {n} 个图标集"
+  },
+  "Stop": "停止",
+  "Stopping…": "正在停止…",
+  "Saved {n} files.": {
+    "other": "已保存 {n} 个文件。"
+  },
+  "Skipped {n} files that are not images.": {
+    "other": "已跳过 {n} 个非图片文件。"
+  },
+  "{failed} of {total} failed.": "{total} 个中有 {failed} 个失败。",
+  "Stopped.": "已停止。",
+  "Details": "详细信息"
+}

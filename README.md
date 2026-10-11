@@ -27,6 +27,10 @@
   added instead (`photo (1).png`)
 - **Light and dark theme**: follows the system automatically or can be set by hand. Settings are
   remembered between launches
+- **19 languages**: English, Deutsch, Español, Français, Bahasa Indonesia, Italiano, Nederlands,
+  Polski, Português (Brasil), Tiếng Việt, Türkçe, Русский, Українська, العربية, हिन्दी, 日本語,
+  한국어, 简体中文 and 繁體中文. The system language is picked automatically, and you can switch in
+  the window. Arabic uses a right-to-left layout
 
 ## Install and run
 
@@ -72,11 +76,27 @@ pytest
 
 GUI tests run without a display (`QT_QPA_PLATFORM=offscreen`, set automatically by the tests).
 
+### Translations
+
+Each language is a JSON file in `iconpress/locales/`. The keys are the English texts, as they
+appear in the code inside `tr("…")`. Texts with a number use plural forms (`one`, `few`,
+`many`, `other`, … following [CLDR](https://cldr.unicode.org/index/cldr-spec/plural-rules)):
+
+```json
+"Saved {n} files.": {"one": "Сохранён {n} файл.", "few": "Сохранено {n} файла.", "many": "Сохранено {n} файлов."}
+```
+
+To add a language, copy `en.json`, translate the values, and add the language to `LANGUAGES`
+(and its plural rule, if it is new) in `iconpress/i18n.py`. `pytest` checks that every file
+has all texts, the right placeholders and every plural form the language needs.
+
 ```
 iconpress/
 ├── core.py     # all image processing (Pillow only, no Qt): conversion, icons, file naming
 ├── app.py      # main window, background worker, settings
 ├── widgets.py  # switch, segmented control, preview / drop zone
-└── theme.py    # light and dark themes
+├── theme.py    # light and dark themes
+├── i18n.py     # translations, plural rules, language detection
+└── locales/    # one JSON file per language
 tests/          # pytest: core logic and GUI smoke tests
 ```
