@@ -5,7 +5,7 @@ from PIL import Image
 
 pytest.importorskip("PySide6.QtWidgets")
 
-from PySide6.QtCore import QSettings  # noqa: E402
+from PySide6.QtCore import QEvent, QSettings  # noqa: E402
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
 from iconpress import core, theme  # noqa: E402
@@ -24,12 +24,18 @@ def settings(tmp_path):
     return QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
 
 
+def close(win):
+    """Close a window and let Qt delete it now, as the event loop would."""
+    win.close()
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+
+
 @pytest.fixture
 def window(app, settings):
     win = MainWindow(settings)
     win.show()
     yield win
-    win.close()
+    close(win)
 
 
 @pytest.fixture
@@ -124,7 +130,7 @@ def test_settings_are_remembered(app, settings, images):
     for i in range(first.chips.count()):
         chip = first.chips.itemAt(i).widget()
         chip.setChecked(chip.text() in ("32", "1024"))
-    first.close()
+    close(first)
 
     second = MainWindow(settings)
     try:
@@ -137,7 +143,7 @@ def test_settings_are_remembered(app, settings, images):
         assert second.icon_options().sizes == (32, 1024)
     finally:
         second._set_theme("light")
-        second.close()
+        close(second)
 
 
 def test_damaged_settings_fall_back_to_defaults(app, settings):
@@ -150,4 +156,4 @@ def test_damaged_settings_fall_back_to_defaults(app, settings):
         assert win.icon_options().sizes == core.ICO_SIZES
         assert win._theme_mode == "auto"
     finally:
-        win.close()
+        close(win)

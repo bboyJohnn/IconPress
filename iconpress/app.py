@@ -7,7 +7,19 @@ from collections import deque
 from functools import partial
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QSettings, QSize, Qt, QThread, QTimer, QUrl, Signal, Slot
+import shiboken6
+from PySide6.QtCore import (
+    QEvent,
+    QObject,
+    QSettings,
+    QSize,
+    Qt,
+    QThread,
+    QTimer,
+    QUrl,
+    Signal,
+    Slot,
+)
 from PySide6.QtGui import QAction, QDesktopServices, QIcon, QKeySequence, QPixmap, QShortcut
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -155,6 +167,9 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("IconPress")
         self.setWindowIcon(QIcon(app_icon_pixmap()))
+        # Free the window (and its combo-box popups, which are separate windows) while the
+        # QApplication still exists; PySide crashes if it has to delete them at exit.
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         self.setAcceptDrops(True)
         self.setMinimumSize(900, 620)
         self.resize(1080, 700)
@@ -855,4 +870,8 @@ def main(argv: list[str] | None = None) -> int:
     window.show()
     if files := [arg for arg in argv[1:] if Path(arg).exists()]:
         window.add_paths(files)
-    return app.exec()
+    code = app.exec()
+    if shiboken6.isValid(window):  # quit without closing the window, e.g. app.quit()
+        window.close()
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    return code
